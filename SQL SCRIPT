@@ -1,0 +1,92 @@
+Select *
+FROM shopping_trends_updated;
+
+-- Total Records, 3900 -- 
+SELECT COUNT('Customer ID')
+FROM shopping_trends_updated;
+
+-- Count of Distinct Customer IDs - 3900
+SELECT COUNT(DISTINCT `Customer ID`)
+FROM shopping_trends_updated;
+
+-- Check duplicates, 0 customer_ids duplicates
+SELECT `Customer ID`, COUNT(`Customer ID`)
+FROM shopping_trends_updated
+GROUP BY `Customer ID`
+HAVING COUNT(`Customer ID`) > 1;
+
+-- Distribution by Gender, Male 2652/ Female 1248
+SELECT gender, COUNT(gender)
+FROM shopping_trends_updated
+GROUP BY gender;
+
+-- Avg Age 44 total, both genders are 44
+SELECT gender, AVG(`age`)
+FROM shopping_trends_updated
+GROUP BY gender;
+
+-- Distribution by Item purchased, Top ITEMS BLOUSE, PANTS, JEWELRY Bottom JEANS, GLOVES, BACKPACK
+SELECT `Item Purchased`, COUNT(`Item Purchased`)
+FROM shopping_trends_updated
+GROUP BY `Item Purchased`
+ORDER BY  COUNT(`Item Purchased`) DESC;
+
+-- Distribution by Category - Clothing 1737, Accessories 1240, Footwear 599, Outerwear 324
+SELECT category, COUNT(category)
+FROM shopping_trends_updated
+GROUP BY category 
+ORDER BY COUNT(category) DESC;
+
+-- TOP/BOTTOM states - TOP Montana 96, California 95, Idaho 93 BOTTOM Kansas 63 Rhode Island 63 Arizona 65
+SELECT location, COUNT(location) 
+FROM shopping_trends_updated
+GROUP BY location 
+ORDER BY COUNT(location) DESC;
+
+-- Distribution by Season, Top Season Spring, Bottom Summer ----- minimal variance in between season Variance (44)
+SELECT season, count(season) 
+FROM shopping_trends_updated
+GROUP BY season
+ORDER BY COUNT(season) DESC; 
+
+-- Subscription Status rate - 27% 
+SELECT 
+ROUND((SUM(CASE WHEN `subscription status` = "Yes" THEN 1 ELSE 0 END)/COUNT(*))*100,2) as subscription_percentage
+FROM shopping_trends_updated;
+
+-- Total Store Average Review Rating - 3.74
+SELECT AVG(`review rating`) 
+FROM shopping_trends_updated;
+
+-- Distribution by Shipping type -- Free SHipping the Most at 675
+SELECT `Shipping Type`, COUNT(`Shipping Type`)
+FROM shopping_trends_updated;
+
+-- AVG basket_size 59.76, -- almost identical variance between genders 
+SELECT gender, AVG(`Purchase Amount (USD)`)
+FROM shopping_trends_updated
+GROUP BY gender;
+
+-- Promo Code distribution - 43% are using discount 
+SELECT 
+	ROUND(SUM(CASE WHEN `Discount Applied` = "Yes" THEN 1 ELSE 0 END)/COUNT(*),2)*100 discount_percentage
+FROM shopping_trends_updated;
+
+-- Targeted Ads/Discounts for Loyalty? -- 77 clients
+SELECT `customer ID`, `previous purchases`
+FROM shopping_trends_updated
+ORDER BY `previous purchases` DESC
+LIMIT 77;
+
+-- Customers with less than 10 purchases -- Targeted Discounts? 708 clients 
+SELECT `customer ID`, `previous purchases`
+FROM shopping_trends_updated
+WHERE `previous purchases` < 10
+ORDER BY `previous purchases` 
+;
+
+-- ALMOST NO variance between subscribers and non-subscribers in terms of total spent !
+SELECT  `Subscription Status`, AVG(`Purchase Amount (USD)`)
+FROM shopping_trends_updated
+GROUP BY  `Subscription Status`
+ORDER BY AVG(`Purchase Amount (USD)`) DESC;
